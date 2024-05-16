@@ -21,6 +21,8 @@ public class Principal {
 	
 	private final String API_KEY = "&apikey=616bb6bc";
 	
+	private List<DadosTemporada> temporadas = new ArrayList<DadosTemporada>();
+	
 	public void exibeMenu() {
 		
 		System.out.print("Digite o nome da śerie para pesquisa: ");
@@ -40,15 +42,25 @@ public class Principal {
 		var dadosSerie = converteDados.obterDados(json, DadosSerie.class);
 		System.out.println(dadosSerie);
 		
-		List<DadosTemporada> temporadas = new ArrayList<DadosTemporada>();
-		
 		for(int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
 			json = consumoAPI.obterDados(API_URL + nomeSerie + "&season="+ i + API_KEY);
 			var dadosTemporada = converteDados.obterDados(json, DadosTemporada.class);
 			temporadas.add(dadosTemporada);
 		}
 		
+		this.imprimeTituloEpisodios();
+		
+	}
+	
+	private void imprimeTemporadas() {
+		
 		temporadas.forEach(System.out::println);
+		
+	}
+	
+	private void imprimeTituloEpisodios() {
+		
+		temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
 		
 	}
 	
