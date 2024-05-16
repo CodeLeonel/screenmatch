@@ -1,9 +1,12 @@
 package br.com.alura.screenmatch.principal;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.service.ConsumoAPI;
@@ -21,7 +24,9 @@ public class Principal {
 	
 	private final String API_KEY = "&apikey=616bb6bc";
 	
-	private List<DadosTemporada> temporadas = new ArrayList<DadosTemporada>();
+	private List<DadosTemporada> temporadas = new ArrayList<>();
+	
+	private List<DadosEpisodio> episodiosSerie = new ArrayList<>();
 	
 	public void exibeMenu() {
 		
@@ -48,7 +53,7 @@ public class Principal {
 			temporadas.add(dadosTemporada);
 		}
 		
-		this.imprimeTituloEpisodios();
+		this.top5Episodios();
 		
 	}
 	
@@ -61,6 +66,26 @@ public class Principal {
 	private void imprimeTituloEpisodios() {
 		
 		temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+		
+	}
+	
+	private void juntaEpisodiosSerie() {
+		
+		episodiosSerie = temporadas.stream()
+			.flatMap(t -> t.episodios().stream())
+			.collect(Collectors.toList());
+		
+	}
+	
+	private void top5Episodios() {
+		
+		this.juntaEpisodiosSerie();
+		
+		episodiosSerie.stream()
+			.filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
+			.sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
+			.limit(5)
+			.forEach(System.out::println);
 		
 	}
 	
