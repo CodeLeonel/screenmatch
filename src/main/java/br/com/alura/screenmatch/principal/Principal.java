@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
+import br.com.alura.screenmatch.model.Episodio;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -27,6 +28,8 @@ public class Principal {
 	private List<DadosTemporada> temporadas = new ArrayList<>();
 	
 	private List<DadosEpisodio> episodiosSerie = new ArrayList<>();
+	
+	private List<Episodio> episodios = new ArrayList<>();
 	
 	public void exibeMenu() {
 		
@@ -53,7 +56,7 @@ public class Principal {
 			temporadas.add(dadosTemporada);
 		}
 		
-		this.top5Episodios();
+		this.colecionaEpisodios();
 		
 	}
 	
@@ -86,6 +89,17 @@ public class Principal {
 			.sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
 			.limit(5)
 			.forEach(System.out::println);
+		
+	}
+	
+	private void colecionaEpisodios() {
+		
+		episodios = temporadas.stream()
+				.flatMap(t -> t.episodios().stream()
+						.map(de -> new Episodio(t.numero(),de))
+						).collect(Collectors.toList());
+				
+		episodios.forEach(System.out::println);
 		
 	}
 	
