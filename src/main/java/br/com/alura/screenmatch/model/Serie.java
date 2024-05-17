@@ -33,7 +33,7 @@ public class Serie {
 		this.atores = ds.atores();
 		this.poster = ds.poster();
 		
-		this.sinopse = ConsultaChatGPT.obterTraducao(ds.sinopse());
+		this.sinopse = ds.sinopse();
 		
 	}
 
