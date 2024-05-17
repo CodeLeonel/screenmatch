@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,9 @@ public class Principal {
 		
 		this.consultarSerie(nome);
 		
+		this.colecionaEpisodios();
+		
+		this.buscarEpisodioTrechoTitulo();
 		
 	}
 	
@@ -57,10 +61,6 @@ public class Principal {
 			var dadosTemporada = converteDados.obterDados(json, DadosTemporada.class);
 			temporadas.add(dadosTemporada);
 		}
-		
-		this.colecionaEpisodios();
-		
-		this.filtraEpisodioPorData();
 		
 	}
 	
@@ -125,6 +125,26 @@ public class Principal {
 					" Episódio: " + e.getTitulo() +
 					" Data de Lançamento: " + e.getDataLancamento().format(dtf)
 					));
+		
+	}
+	
+	private void buscarEpisodioTrechoTitulo() {
+		
+		System.out.print("Digite um trecho do título do episódio: ");
+		
+		var trechoTitulo = leitura.nextLine();
+		
+		Optional<Episodio> episodioBuscado = episodios.stream()
+				.filter(e -> e.getTitulo().contains(trechoTitulo))
+				.findFirst();
+		
+		if(episodioBuscado.isPresent()) {
+			var ep = episodioBuscado.get();
+			System.out.println("Episódio encontrado: " + ep.getTitulo());
+			System.out.println("Temporada: " + ep.getTemporada());
+		} else {
+			System.out.println("Episódio não encontrado");
+		}
 		
 	}
 	
