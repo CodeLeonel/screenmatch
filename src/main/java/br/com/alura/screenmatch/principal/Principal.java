@@ -44,7 +44,7 @@ public class Principal {
 		var opcao = -1;
 		var nomeSerie = "";
 		while (opcao != 0) {
-
+			
 			System.out.print("""
 					1 - Buscar série
 					2 - Buscar temporadas

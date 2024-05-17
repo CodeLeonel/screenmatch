@@ -4,6 +4,8 @@ import java.util.OptionalDouble;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
+import br.com.alura.screenmatch.service.ConsultaChatGPT;
+
 public class Serie {
 
 	private String titulo;
@@ -29,8 +31,9 @@ public class Serie {
 		this.genero = Categoria.fromString(ds.genero().split(",")[0].trim());
 		
 		this.atores = ds.atores();
-		this.sinopse = ds.sinopse();
 		this.poster = ds.poster();
+		
+		this.sinopse = ConsultaChatGPT.obterTraducao(ds.sinopse());
 		
 	}
 
