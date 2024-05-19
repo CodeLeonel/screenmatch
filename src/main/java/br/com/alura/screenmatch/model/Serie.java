@@ -1,5 +1,7 @@
 package br.com.alura.screenmatch.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalDouble;
 
 import jakarta.persistence.Column;
@@ -9,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -34,6 +37,9 @@ public class Serie {
 	private String poster;
 	
 	private String sinopse;
+	
+	@OneToMany(mappedBy = "serie")
+	private List<Episodio> episodios = new ArrayList<>();
 	
 	public Serie() {
 		
