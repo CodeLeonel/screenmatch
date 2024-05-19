@@ -16,6 +16,7 @@ import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.model.Episodio;
 import br.com.alura.screenmatch.model.Serie;
+import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -39,6 +40,12 @@ public class Principal {
 
 	private List<Episodio> episodios = new ArrayList<>();
 
+	private SerieRepository repositorio;
+	
+	public Principal(SerieRepository repositorio) {
+		this.repositorio = repositorio;
+	}
+	
 	public void exibeMenu() {
 
 		var opcao = -1;
@@ -89,8 +96,9 @@ public class Principal {
 
 		var json = consumoAPI.obterDados(API_URL + nomeSerie + API_KEY);
 		var dadosSerie = converteDados.obterDados(json, DadosSerie.class);
-		listaSeries.add(dadosSerie);
-		System.out.println(dadosSerie);
+		var serie = new Serie(dadosSerie);
+		repositorio.save(serie);
+		System.out.println(serie);
 
 	}
 
