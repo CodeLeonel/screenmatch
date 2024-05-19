@@ -2,18 +2,31 @@ package br.com.alura.screenmatch.model;
 
 import java.util.OptionalDouble;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-import br.com.alura.screenmatch.service.ConsultaChatGPT;
-
+@Entity
+@Table(name = "series")
 public class Serie {
-
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@Column(unique = true)
 	private String titulo;
 	
 	private Integer totalTemporadas;
 	
 	private Double avaliacao;
 	
+	@Enumerated(EnumType.STRING)
 	private Categoria genero;
 	
 	private String atores;
@@ -41,6 +54,14 @@ public class Serie {
 	public String toString() {
 		return "[titulo=" + titulo + ", totalTemporadas=" + totalTemporadas + ", avaliacao=" + avaliacao
 				+ ", genero=" + genero + ", atores=" + atores + ", poster=" + poster + ", sinopse=" + sinopse + "]";
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getTitulo() {
