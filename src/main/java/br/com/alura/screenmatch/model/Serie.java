@@ -35,6 +35,10 @@ public class Serie {
 	
 	private String sinopse;
 	
+	public Serie() {
+		
+	}
+	
 	public Serie(DadosSerie ds) {
 		
 		this.titulo = ds.titulo();

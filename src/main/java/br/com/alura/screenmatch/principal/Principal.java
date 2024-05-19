@@ -97,7 +97,7 @@ public class Principal {
 		var json = consumoAPI.obterDados(API_URL + nomeSerie + API_KEY);
 		var dadosSerie = converteDados.obterDados(json, DadosSerie.class);
 		var serie = new Serie(dadosSerie);
-		repositorio.save(serie);
+		this.repositorio.save(serie);
 		System.out.println(serie);
 
 	}
@@ -119,11 +119,7 @@ public class Principal {
 	
 	private void exibeListaSeries() {
 		
-		List<Serie> series = new ArrayList<>();
-		
-		series = listaSeries.stream()
-				.map(se -> new Serie(se))
-				.collect(Collectors.toList());
+		List<Serie> series = this.repositorio.findAll();
 		
 		series.stream()
 		.sorted(Comparator.comparing(Serie::getGenero))
