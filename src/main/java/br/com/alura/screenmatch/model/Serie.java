@@ -129,6 +129,13 @@ public class Serie {
 	public void setSinopse(String sinopse) {
 		this.sinopse = sinopse;
 	}
-	
+
+	public List<Episodio> getEpisodios() {
+		return episodios;
+	}
+
+	public void setEpisodios(List<Episodio> episodios) {
+		this.episodios = episodios;
+	}
 	
 }

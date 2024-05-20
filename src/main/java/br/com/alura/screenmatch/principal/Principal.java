@@ -31,7 +31,7 @@ public class Principal {
 	private final String API_URL = "http://www.omdbapi.com/?t=";
 
 	private final String API_KEY = "&apikey=616bb6bc";
-	
+
 	private List<DadosSerie> listaSeries = new ArrayList<>();
 
 	private List<DadosTemporada> temporadas = new ArrayList<>();
@@ -41,17 +41,19 @@ public class Principal {
 	private List<Episodio> episodios = new ArrayList<>();
 
 	private SerieRepository repositorio;
-	
+
+	private List<Serie> series = new ArrayList<>();
+
 	public Principal(SerieRepository repositorio) {
 		this.repositorio = repositorio;
 	}
-	
+
 	public void exibeMenu() {
 
 		var opcao = -1;
 		var nomeSerie = "";
 		while (opcao != 0) {
-			
+
 			System.out.print("""
 					1 - Buscar série
 					2 - Buscar temporadas
@@ -59,7 +61,7 @@ public class Principal {
 					0 - Sair
 
 					Digite a opção:""");
-			
+
 			opcao = leitura.nextInt();
 			leitura.nextLine();
 
@@ -72,9 +74,9 @@ public class Principal {
 				this.consultarSerie(nomeSerie);
 				break;
 			case 2:
+				exibeListaSeries();
 				System.out.print("Digite o nome da śerie para pesquisa: ");
 				nomeSerie = leitura.nextLine();
-				nomeSerie = nomeSerie.toLowerCase().replace(" ", "+");
 				this.buscaTemporadasPorSerie(nomeSerie);
 				break;
 			case 3:
@@ -104,27 +106,44 @@ public class Principal {
 
 	private void buscaTemporadasPorSerie(String nomeSerie) {
 
-		var json = consumoAPI.obterDados(API_URL + nomeSerie + API_KEY);
-		var dadosSerie = converteDados.obterDados(json, DadosSerie.class);
+		var serie = series.stream().filter(s -> s.getTitulo().contains(nomeSerie)).findFirst();
 
-		for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
-			json = consumoAPI.obterDados(API_URL + nomeSerie + "&season=" + i + API_KEY);
-			var dadosTemporada = converteDados.obterDados(json, DadosTemporada.class);
-			temporadas.add(dadosTemporada);
+		if (serie.isPresent()) {
+
+			this.temporadas.clear();
+
+			var serieEncontrada = serie.get();
+			var nomeSerieEncontrada = serieEncontrada.getTitulo().toLowerCase().replace(" ", "+");
+
+			for (int i = 1; i <= serieEncontrada.getTotalTemporadas(); i++) {
+				var json = consumoAPI.obterDados(API_URL + nomeSerieEncontrada + "&season=" + i + API_KEY);
+				var dadosTemporada = converteDados.obterDados(json, DadosTemporada.class);
+				temporadas.add(dadosTemporada);
+			}
+
+			this.imprimeTemporadas();
+
+			List<Episodio> episodios = temporadas.stream()
+					.flatMap(dt -> dt.episodios().stream().map(de -> new Episodio(dt.numero(), de)))
+					.collect(Collectors.toList());
+			
+			serieEncontrada.setEpisodios(episodios);
+			
+			this.repositorio.save(serieEncontrada);
+			
+
+		} else {
+			System.out.println("Série não encontrada");
 		}
 
-		this.imprimeTemporadas();
-
 	}
-	
+
 	private void exibeListaSeries() {
-		
-		List<Serie> series = this.repositorio.findAll();
-		
-		series.stream()
-		.sorted(Comparator.comparing(Serie::getGenero))
-		.forEach(System.out::println);
-		
+
+		this.series = this.repositorio.findAll();
+
+		this.series.stream().sorted(Comparator.comparing(Serie::getGenero)).forEach(System.out::println);
+
 	}
 
 	private void imprimeTemporadas() {
