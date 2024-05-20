@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import br.com.alura.screenmatch.model.Categoria;
 import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
@@ -32,8 +33,6 @@ public class Principal {
 
 	private final String API_KEY = "&apikey=616bb6bc";
 
-	private List<DadosSerie> listaSeries = new ArrayList<>();
-
 	private List<DadosTemporada> temporadas = new ArrayList<>();
 
 	private List<DadosEpisodio> episodiosSerie = new ArrayList<>();
@@ -51,7 +50,6 @@ public class Principal {
 	public void exibeMenu() {
 
 		var opcao = -1;
-		var nomeSerie = "";
 		while (opcao != 0) {
 
 			System.out.print("""
@@ -61,6 +59,7 @@ public class Principal {
 					4 - Buscar série por título
 					5 - Buscar séries por ator
 					6 - Buscar as 5 melhores séries
+					7 - Buscar séries por gênero
 					0 - Sair
 
 					Digite a opção:""");
@@ -89,6 +88,9 @@ public class Principal {
 			case 6:
 				top5Series();
 				break;
+			case 7:
+				exibeSeriesPorCategoria();
+				break;
 			case 0:
 				System.out.println("Saindo...");
 				break;
@@ -96,14 +98,9 @@ public class Principal {
 				System.out.println("Opção inválida!");
 				break;
 			}
-
 		}
-
 	}
 
-	
-
-	
 
 	private String obterNomeSerie() {
 		
@@ -194,6 +191,29 @@ public class Principal {
 		
 	}
 
+	private void top5Series() {
+		
+		List<Serie> seriesTop = repositorio.findTop5ByOrderByAvaliacaoDesc();
+		
+		seriesTop.forEach(s -> 
+		System.out.println(s.getTitulo() + " - Avaliação: " + s.getAvaliacao()));
+		
+	}
+	
+	private void exibeSeriesPorCategoria() {
+		
+		System.out.print("Digite um gênero para a busca: ");
+		var genero = leitura.nextLine();
+		var categoria = Categoria.fromPortugues(genero);
+		List<Serie> series = repositorio.findByGeneroOrderByAvaliacaoDesc(categoria);
+		
+		System.out.println("Lista de séries do gênero " + genero + ":");
+		
+		series.forEach(s -> 
+		System.out.println(s.getTitulo() + " - Avaliação: " + s.getAvaliacao()));
+		
+	}
+	
 	private void exibeListaSeries() {
 
 		series = repositorio.findAll();
@@ -220,14 +240,7 @@ public class Principal {
 
 	}
 
-	private void top5Series() {
-		
-		List<Serie> seriesTop = repositorio.findTop5ByOrderByAvaliacaoDesc();
-		
-		seriesTop.forEach(s -> 
-		System.out.println(s.getTitulo() + " - Avaliação: " + s.getAvaliacao()));
-		
-	}
+	
 	
 	private void top5Episodios() {
 
