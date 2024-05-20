@@ -60,6 +60,7 @@ public class Principal {
 					5 - Buscar séries por ator
 					6 - Buscar as 5 melhores séries
 					7 - Buscar séries por gênero
+					8 - Buscar séries para maratonar
 					0 - Sair
 
 					Digite a opção:""");
@@ -91,6 +92,9 @@ public class Principal {
 			case 7:
 				exibeSeriesPorCategoria();
 				break;
+			case 8:
+				exibeSeriesParaMaratonar();
+				break;
 			case 0:
 				System.out.println("Saindo...");
 				break;
@@ -100,7 +104,6 @@ public class Principal {
 			}
 		}
 	}
-
 
 	private String obterNomeSerie() {
 		
@@ -211,6 +214,24 @@ public class Principal {
 		
 		series.forEach(s -> 
 		System.out.println(s.getTitulo() + " - Avaliação: " + s.getAvaliacao()));
+		
+	}
+	
+	private void exibeSeriesParaMaratonar() {
+	
+		System.out.print("Digite um número máximo de temporadas: ");
+		var totalTemporadas = leitura.nextInt();
+		
+		System.out.print("Digite uma nota de avalição mínima: ");
+		var avaliacao = leitura.nextDouble();
+		leitura.nextLine();
+		
+		List<Serie> series = repositorio.findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(totalTemporadas,avaliacao);
+		
+		series.forEach(s -> 
+			System.out.println(s.getTitulo() 
+					+ " - Total Temporadas: " + s.getTotalTemporadas() 
+			+ " - Avaliação: " + s.getAvaliacao()));
 		
 	}
 	
