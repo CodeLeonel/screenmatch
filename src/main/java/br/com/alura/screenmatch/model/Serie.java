@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,7 +40,7 @@ public class Serie {
 	
 	private String sinopse;
 	
-	@OneToMany(mappedBy = "serie")
+	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private List<Episodio> episodios = new ArrayList<>();
 	
 	public Serie() {
@@ -63,7 +65,16 @@ public class Serie {
 	@Override
 	public String toString() {
 		return "[titulo=" + titulo + ", totalTemporadas=" + totalTemporadas + ", avaliacao=" + avaliacao
-				+ ", genero=" + genero + ", atores=" + atores + ", poster=" + poster + ", sinopse=" + sinopse + "]";
+				+ ", genero=" + genero + ", atores=" + atores + ", poster=" + poster + ", sinopse=" + sinopse + ", episodios=" + episodios + "]";
+	}
+	
+	public List<Episodio> getEpisodios() {
+		return episodios;
+	}
+
+	public void setEpisodios(List<Episodio> episodios) {
+		episodios.forEach(e -> e.setSerie(this));
+		this.episodios = episodios;
 	}
 	
 	public Long getId() {
@@ -130,12 +141,6 @@ public class Serie {
 		this.sinopse = sinopse;
 	}
 
-	public List<Episodio> getEpisodios() {
-		return episodios;
-	}
-
-	public void setEpisodios(List<Episodio> episodios) {
-		this.episodios = episodios;
-	}
+	
 	
 }
