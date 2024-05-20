@@ -56,8 +56,9 @@ public class Principal {
 
 			System.out.print("""
 					1 - Buscar série
-					2 - Buscar temporadas
+					2 - Buscar episódios
 					3 - Listar séries buscadas
+					4 - Buscar série por título
 					0 - Sair
 
 					Digite a opção:""");
@@ -68,19 +69,17 @@ public class Principal {
 			switch (opcao) {
 
 			case 1:
-				System.out.print("Digite o nome da śerie para pesquisa: ");
-				nomeSerie = leitura.nextLine();
-				nomeSerie = nomeSerie.toLowerCase().replace(" ", "+");
-				this.consultarSerie(nomeSerie);
+				this.consultarSerie(obterNomeSerie());
 				break;
 			case 2:
 				exibeListaSeries();
-				System.out.print("Digite o nome da śerie para pesquisa: ");
-				nomeSerie = leitura.nextLine();
-				this.buscaTemporadasPorSerie(nomeSerie);
+				this.buscaEpisodiosPorSerie(obterNomeSerie());
 				break;
 			case 3:
 				exibeListaSeries();
+				break;
+			case 4:
+				buscaSeriePorTitulo(obterNomeSerie());
 				break;
 			case 0:
 				System.out.println("Saindo...");
@@ -94,8 +93,36 @@ public class Principal {
 
 	}
 
+	private void buscaSeriePorTitulo(String obterNomeSerie) {
+		
+		var serieBuscada = repositorio.findByTituloContainsIgnoreCase(obterNomeSerie);
+		
+		if(serieBuscada.isPresent()) {
+			
+			System.out.println("Dados da série: " + serieBuscada.get());
+			
+		} else {
+			
+			System.out.println("Série não encontrada!");
+			
+		}
+		
+		
+		
+	}
+
+	private String obterNomeSerie() {
+		
+		System.out.print("Digite o nome da śerie para pesquisa: ");
+		
+		return leitura.nextLine();
+	
+	}
+	
 	private void consultarSerie(String nomeSerie) {
 
+		nomeSerie = nomeSerie.toLowerCase().replace(" ", "+");
+		
 		var json = consumoAPI.obterDados(API_URL + nomeSerie + API_KEY);
 		var dadosSerie = converteDados.obterDados(json, DadosSerie.class);
 		var serie = new Serie(dadosSerie);
@@ -104,13 +131,13 @@ public class Principal {
 
 	}
 
-	private void buscaTemporadasPorSerie(String nomeSerie) {
+	private void buscaEpisodiosPorSerie(String nomeSerie) {
 
-		var serie = series.stream().filter(s -> s.getTitulo().contains(nomeSerie)).findFirst();
+		var serie = repositorio.findByTituloContainsIgnoreCase(nomeSerie);
 
 		if (serie.isPresent()) {
 
-			this.temporadas.clear();
+			temporadas.clear();
 
 			var serieEncontrada = serie.get();
 			var nomeSerieEncontrada = serieEncontrada.getTitulo().toLowerCase().replace(" ", "+");
@@ -129,7 +156,7 @@ public class Principal {
 			
 			serieEncontrada.setEpisodios(episodios);
 			
-			this.repositorio.save(serieEncontrada);
+			repositorio.save(serieEncontrada);
 			
 
 		} else {
@@ -140,9 +167,9 @@ public class Principal {
 
 	private void exibeListaSeries() {
 
-		this.series = this.repositorio.findAll();
+		series = repositorio.findAll();
 
-		this.series.stream().sorted(Comparator.comparing(Serie::getGenero)).forEach(System.out::println);
+		series.stream().sorted(Comparator.comparing(Serie::getGenero)).forEach(System.out::println);
 
 	}
 
@@ -166,7 +193,7 @@ public class Principal {
 
 	private void top5Episodios() {
 
-		this.juntaEpisodiosSerie();
+		juntaEpisodiosSerie();
 
 		episodiosSerie.stream().filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
 				.sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed()).limit(5)
