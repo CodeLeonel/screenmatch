@@ -42,6 +42,8 @@ public class Principal {
 	private SerieRepository repositorio;
 
 	private List<Serie> series = new ArrayList<>();
+	
+	private Optional<Serie> serieBuscada;
 
 	public Principal(SerieRepository repositorio) {
 		this.repositorio = repositorio;
@@ -62,6 +64,7 @@ public class Principal {
 					7 - Buscar séries por gênero
 					8 - Buscar séries para maratonar
 					9 - Buscar episódios por trecho de título
+					10 - Buscar melhores episódios de uma série
 					0 - Sair
 
 					Digite a opção:""");
@@ -99,6 +102,9 @@ public class Principal {
 			case 9:
 				buscarSeriesPorTrechoTitulo();
 				break;
+			case 10:
+				topEpisodiosPorSerie();
+				break;
 			case 0:
 				System.out.println("Saindo...");
 				break;
@@ -108,6 +114,8 @@ public class Principal {
 			}
 		}
 	}
+
+	
 
 	private String obterNomeSerie() {
 		
@@ -163,9 +171,9 @@ public class Principal {
 
 	}
 	
-	private void buscaSeriePorTitulo(String obterNomeSerie) {
+	private void buscaSeriePorTitulo(String nomeSerie) {
 		
-		var serieBuscada = repositorio.findByTituloContainsIgnoreCase(obterNomeSerie);
+		serieBuscada = repositorio.findByTituloContainsIgnoreCase(nomeSerie);
 		
 		if(serieBuscada.isPresent()) {
 			
@@ -251,6 +259,26 @@ public class Principal {
 			System.out.printf("Série: %s Temporada: %s - Episodio %s - %s\n",
 					e.getSerie().getTitulo(), e.getTemporada(), 
 					e.getNumeroEpisodio(), e.getTitulo()));
+		
+	}
+	
+	private void topEpisodiosPorSerie() {
+	
+		buscaSeriePorTitulo(obterNomeSerie());
+		
+		if(serieBuscada.isPresent()) {
+			
+			Serie serie = serieBuscada.get();
+			
+			List<Episodio> episodios = repositorio.topEpisodiosPorSerie(serie);
+			
+			episodios.forEach(e -> 
+			System.out.printf("Temporada: %s - Episodio %s - %s - Avaliação: %.1f \n",
+					e.getTemporada(), 
+					e.getNumeroEpisodio(), e.getTitulo(),
+					e.getAvaliacao())
+			);
+		}
 		
 	}
 	
@@ -343,8 +371,8 @@ public class Principal {
 
 	private void avaliacoesPorTemporada() {
 
-		Map<Integer, Double> avaliacoesTemporada = episodios.stream().filter(e -> e.getAvalicao() > 0.0).collect(
-				Collectors.groupingBy(Episodio::getTemporada, Collectors.averagingDouble(Episodio::getAvalicao)));
+		Map<Integer, Double> avaliacoesTemporada = episodios.stream().filter(e -> e.getAvaliacao() > 0.0).collect(
+				Collectors.groupingBy(Episodio::getTemporada, Collectors.averagingDouble(Episodio::getAvaliacao)));
 
 		System.out.println(avaliacoesTemporada);
 
@@ -352,8 +380,8 @@ public class Principal {
 
 	private void estatisticas() {
 
-		DoubleSummaryStatistics est = episodios.stream().filter(e -> e.getAvalicao() > 0.0)
-				.collect(Collectors.summarizingDouble(Episodio::getAvalicao));
+		DoubleSummaryStatistics est = episodios.stream().filter(e -> e.getAvaliacao() > 0.0)
+				.collect(Collectors.summarizingDouble(Episodio::getAvaliacao));
 
 		System.out.println(est);
 		System.out.println("Média: " + est.getAverage());

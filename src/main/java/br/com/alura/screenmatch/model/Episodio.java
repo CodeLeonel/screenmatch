@@ -21,7 +21,7 @@ public class Episodio {
 	private Integer temporada;
 	private String titulo;
 	private Integer numeroEpisodio;
-	private Double avalicao;
+	private Double avaliacao;
 	private LocalDate dataLancamento;
 	
 	@ManyToOne
@@ -38,9 +38,9 @@ public class Episodio {
 		this.numeroEpisodio = episodio.numero();
 
 		try {
-			this.avalicao = Double.valueOf(episodio.avaliacao());
+			this.avaliacao = Double.valueOf(episodio.avaliacao());
 		} catch (NumberFormatException ex) {
-			this.avalicao = 0.0;
+			this.avaliacao = 0.0;
 		}
 
 		try {
@@ -54,7 +54,7 @@ public class Episodio {
 	@Override
 	public String toString() {
 		return "[temporada=" + temporada + ", titulo=" + titulo + ", numeroEpisodio=" + numeroEpisodio + ", avalicao="
-				+ avalicao + ", dataLancamento=" + dataLancamento + "]";
+				+ avaliacao + ", dataLancamento=" + dataLancamento + "]";
 	}
 
 	public Long getId() {
@@ -97,12 +97,12 @@ public class Episodio {
 		this.numeroEpisodio = numeroEpisodio;
 	}
 
-	public Double getAvalicao() {
-		return avalicao;
+	public Double getAvaliacao() {
+		return avaliacao;
 	}
 
-	public void setAvalicao(Double avalicao) {
-		this.avalicao = avalicao;
+	public void setAvaliacao(Double avaliacao) {
+		this.avaliacao = avaliacao;
 	}
 
 	public LocalDate getDataLancamento() {
