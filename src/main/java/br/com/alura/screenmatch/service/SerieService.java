@@ -15,24 +15,28 @@ public class SerieService {
 
 	@Autowired
 	private SerieRepository repositorio;
-	
+
 	public List<SerieDTO> obterTodasSeries() {
-		
+
 		return converteDados(repositorio.findAll());
-	
+
 	}
 
 	public List<SerieDTO> obterTop5Series() {
-		
+
 		return converteDados(repositorio.findTop5ByOrderByAvaliacaoDesc());
 	}
-	
-	private List<SerieDTO> converteDados(List<Serie> lista) {
-		
-		return lista.stream()
-		.map(s -> new SerieDTO(s.getId(),s.getTitulo(),s.getTotalTemporadas(), s.getAvaliacao(), s.getGenero(), s.getAtores(), s.getPoster(), s.getSinopse()))
-		.collect(Collectors.toList());
-	
+
+	public List<SerieDTO> obterLancamentos() {
+
+		return converteDados(repositorio.findTop5ByOrderByEpisodiosDataLancamentoDesc());
 	}
-	
+
+	private List<SerieDTO> converteDados(List<Serie> lista) {
+
+		return lista.stream().map(s -> new SerieDTO(s.getId(), s.getTitulo(), s.getTotalTemporadas(), s.getAvaliacao(),
+				s.getGenero(), s.getAtores(), s.getPoster(), s.getSinopse())).collect(Collectors.toList());
+
+	}
+
 }
