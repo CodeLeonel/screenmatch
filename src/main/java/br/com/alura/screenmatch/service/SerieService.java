@@ -32,11 +32,31 @@ public class SerieService {
 		return converteDados(repositorio.findTop5ByOrderByEpisodiosDataLancamentoDesc());
 	}
 
+	
+
+	public SerieDTO obterSeriePorId(Long id) {
+		
+		var optSerie = repositorio.findById(id);
+		
+		if(optSerie.isPresent()) {
+			
+			return converteDado(optSerie.get());
+			
+		}
+		
+		return null;
+	}
+	
 	private List<SerieDTO> converteDados(List<Serie> lista) {
 
 		return lista.stream().map(s -> new SerieDTO(s.getId(), s.getTitulo(), s.getTotalTemporadas(), s.getAvaliacao(),
 				s.getGenero(), s.getAtores(), s.getPoster(), s.getSinopse())).collect(Collectors.toList());
 
+	}
+	
+	private SerieDTO converteDado(Serie s) {
+		return new SerieDTO(s.getId(), s.getTitulo(), s.getTotalTemporadas(), s.getAvaliacao(),
+				s.getGenero(), s.getAtores(), s.getPoster(), s.getSinopse());
 	}
 
 }
