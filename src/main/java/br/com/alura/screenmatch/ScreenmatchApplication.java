@@ -9,24 +9,10 @@ import br.com.alura.screenmatch.principal.Principal;
 import br.com.alura.screenmatch.repository.SerieRepository;
 
 @SpringBootApplication
-public class ScreenmatchApplication implements CommandLineRunner {
-
-	@Autowired
-	private SerieRepository serieRepositorio;
+public class ScreenmatchApplication {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(ScreenmatchApplication.class, args);
 	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		
-		Principal principal = new Principal(serieRepositorio);
-		
-		principal.exibeMenu();
-		
-	}
-	
-	
 
 }
