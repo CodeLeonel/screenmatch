@@ -53,6 +53,12 @@ public class SerieService {
 		
 	}
 	
+	public List<EpisodioDTO> obterTemporadaPorNumero(Long id, Integer numero) {
+		
+		return converteDadosEpisodio(repositorio.buscaEpisodiosPorSerieETemporada(id, numero));
+		
+	}
+	
 	private List<SerieDTO> converteDados(List<Serie> lista) {
 
 		return lista.stream().map(s -> new SerieDTO(s.getId(), s.getTitulo(), s.getTotalTemporadas(), s.getAvaliacao(),
